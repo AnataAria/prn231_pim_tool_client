@@ -1,6 +1,7 @@
 import Navbar from "../../components/common/NavBar";
 import LeftBar from "../../components/common/LeftBar";
 import { Outlet } from "react-router-dom";
+import Footer from "../../components/common/Footer";
 const ManagerLayout = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -13,6 +14,7 @@ const ManagerLayout = () => {
                     <Outlet />
                 </div>
             </div>
+            <Footer/>
         </div>
     )
 }
