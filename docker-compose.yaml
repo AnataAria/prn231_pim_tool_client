@@ -1,0 +1,14 @@
+services:
+  pimtool-client:
+    container_name: pimtool-client
+    image: ${DOCKER_USERNAME}/pimtool-client:latest
+    networks:
+      - pim-tool-networks
+    ports:
+      - 5000:80
+
+
+networks:
+  pim-tool-networks:
+    name: pim_tool_networks
+    external: true
