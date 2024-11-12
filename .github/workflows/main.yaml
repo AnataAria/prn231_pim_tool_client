@@ -40,4 +40,4 @@ jobs:
       - name: Stop PIM Client
         run: docker compose -p pimtool-application down pimtool-client --rmi all -v
       - name: Deploy Client
-        run: docker compose -p pimtool-application up -d pimtool-client
+        run: docker compose -p pimtool-application up pimtool-client -d
