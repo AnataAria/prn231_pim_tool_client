@@ -3,6 +3,7 @@ import { Table, Space, Input, Select, Button } from "antd";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { authenticationAxios } from "../../../services/baseService";
 
 // Define the structure of the project data
 interface Project {
@@ -12,9 +13,6 @@ interface Project {
   customer: string;
   startDate: string;
 }
-
-
-
 const ProjectList: React.FC = () => {
   const [checkStrictly, setCheckStrictly] = useState(false);
   const [data, setData] = useState<Project[]>([]);
@@ -60,14 +58,13 @@ const ProjectList: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`http://localhost:9090/api/v1/project`, {
+      const response = await authenticationAxios.delete(`/projects`, {
         params: { deleteId: id },
-      });
+      })
 
       if (response.status === 200) {
         console.log("Project deleted successfully!");
         toast("Project deleted successfully!");
-        // Refresh the project list after deletion
         fetchProjects();
       } else {
         toast("Failed to delete project.");
@@ -89,7 +86,7 @@ const ProjectList: React.FC = () => {
   const fetchProjects = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:9090/api/v1/projects");
+      const response = await authenticationAxios.get("/projects");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching projects:", error);
