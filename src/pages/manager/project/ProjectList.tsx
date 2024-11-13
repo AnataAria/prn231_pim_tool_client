@@ -87,7 +87,7 @@ const ProjectList: React.FC = () => {
     setLoading(true);
     try {
       const response = await authenticationAxios.get("/projects");
-      setData(response.data);
+      setData(response.data.data);
     } catch (error) {
       console.error("Error fetching projects:", error);
       toast("Error fetching projects.");
