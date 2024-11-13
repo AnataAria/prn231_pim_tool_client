@@ -15,7 +15,7 @@ const EmployeeTablePage = () => {
     const fetchEmployees = async () => {
       try {
         const response = await authenticationAxios.get('/employees/search');
-        setEmployees(response.data);
+        setEmployees(response.data.data);
         setLoading(false);
       } catch (error) {
         setError(error.message);
