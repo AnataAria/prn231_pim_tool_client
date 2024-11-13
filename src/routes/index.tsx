@@ -5,6 +5,8 @@ import ManagerLayout from "../pages/manager/layout";
 import NotFoundPage from "../pages/common/NotFoundPage";
 import ProjectList from "../pages/manager/project/ProjectList";
 import ProjectPage from "../pages/manager/project/ProjectModified";
+import GroupTableView from "../pages/manager/group/page";
+import EmployeeTablePage from "../pages/manager/employee/page";
 
 // Lazy loading components
 const LoginPage = lazy(() => import("../pages/login/index"));
@@ -27,8 +29,16 @@ const routes = createBrowserRouter([
                 element: <ProjectList/>
             },
             {
+                path: "/admin/employees",
+                element: <EmployeeTablePage/>
+            },
+            {
                 path: "/admin/projects/:projectId",
                 element: <ProjectPage/>
+            },
+            {
+                path: "/admin/groups",
+                element: <GroupTableView/>
             }
         ]   
     },

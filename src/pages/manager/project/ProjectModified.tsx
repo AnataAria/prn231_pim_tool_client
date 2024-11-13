@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "antd";
 import axios from "axios";
+import { authenticationAxios } from "../../../services/baseService";
 
 const ProjectPage = () => {
   const { projectId } = useParams();
@@ -29,8 +30,8 @@ const ProjectPage = () => {
     if (projectId) {
       const getData = async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:9090/api/v1/project?projectId=${projectId}`
+          const response = await authenticationAxios.get(
+            `/projects/${projectId}`
           );
           setFormData(response.data);
         } catch (error) {

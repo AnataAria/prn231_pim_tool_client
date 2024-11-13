@@ -11,7 +11,7 @@ const LeftBar: React.FC = () => {
           <ul className="space-y-4">
             <li>
               <Link
-                to="/projects/new"
+                to="/admin/projects/new"
                 className="flex items-center space-x-3 text-lg font-medium hover:bg-blue-700 hover:text-white rounded-md px-4 py-2 transition duration-300"
               >
                 <FaPlusCircle className="h-6 w-6 text-blue-400" />
@@ -29,20 +29,20 @@ const LeftBar: React.FC = () => {
             </li>
             <li>
               <a
-                href="#"
+                href="/admin/employee"
                 className="flex items-center space-x-3 text-lg font-medium text-gray-400 hover:bg-gray-700 hover:text-white rounded-md px-4 py-2 transition duration-300"
               >
                 <FaUser className="h-6 w-6 text-gray-400" />
-                <span>Customer</span>
+                <span>Employee</span>
               </a>
             </li>
             <li>
               <a
-                href="#"
+                href="/admin/groups"
                 className="flex items-center space-x-3 text-lg font-medium text-gray-400 hover:bg-gray-700 hover:text-white rounded-md px-4 py-2 transition duration-300"
               >
                 <FaTruck className="h-6 w-6 text-gray-400" />
-                <span>Supplier</span>
+                <span>Group</span>
               </a>
             </li>
           </ul>
