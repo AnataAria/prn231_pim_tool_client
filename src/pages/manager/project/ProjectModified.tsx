@@ -8,7 +8,7 @@ import { authenticationAxios } from "../../../services/baseService";
 const ProjectPage = () => {
   const { projectId } = useParams();
   const [redirect, setRedirect] = useState(false);
-  const [groupid, setGroupid] = useState([
+  const [groupOptions] = useState([
     { value: 1, label: "1" },
     { value: 2, label: "2" },
     { value: 3, label: "3" },
@@ -23,30 +23,24 @@ const ProjectPage = () => {
     startDate: "",
     endDate: "",
     version: 1,
-    employeeVisa: [],
   });
 
   useEffect(() => {
     if (projectId) {
-      const getData = async () => {
+      const fetchData = async () => {
         try {
-          const response = await authenticationAxios.get(
-            `/projects/${projectId}`
-          );
-          setFormData(response.data);
+          const { data } = await authenticationAxios.get(`/projects/${projectId}`);
+          setFormData(data);
         } catch (error) {
           toast.error(error.message);
         }
       };
-      getData();
+      fetchData();
     }
   }, [projectId]);
 
-  const throwsErrorToScreen = (message: string) => {
-    const errorList = message.split("\n");
-    errorList.forEach((error) => {
-      toast(error);
-    });
+  const displayErrors = (message) => {
+    message.split("\n").forEach((error) => toast.error(error));
   };
 
   const handleChange = (e) => {
@@ -59,30 +53,25 @@ const ProjectPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = projectId
-      ? "http://localhost:9090/api/v1/project"
-      : "http://localhost:9090/api/v1/project/";
-
-    const method = projectId ? "PUT" : "POST";
 
     try {
-      const response = await axios({
-        method,
-        url,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: formData,
+      const { status } = await authenticationAxios.post('/projects', {
+        groupId: formData.groupId,
+        name: formData.name,
+        projectNumber: formData.projectNumber,
+        customer: formData.customer,
+        status: formData.status,
+        startDate: formData.startDate,
+        endDate: formData.endDate
       });
 
-      if (response.status === 200 || response.status === 201) {
+      if (status === 200 || status === 201) {
         toast.success(`Project ${projectId ? "updated" : "created"} successfully!`);
       }
     } catch (error) {
-      const errorRes = error.response.data;
-      const errorMes = errorRes.message;
-      toast.error(errorMes);
-      throwsErrorToScreen(errorRes.errors);
+      const { message, errors } = error.response.data;
+      toast.error(message);
+      displayErrors(errors);
       setRedirect(true);
     }
   };
@@ -93,128 +82,81 @@ const ProjectPage = () => {
         {projectId ? "Edit Project" : "New Project"}
       </h2>
       <div className="border-b border-gray-300 mb-4" />
+      
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="project-number" className="block text-sm font-medium text-gray-700">
-            Project number <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="project-number"
-            name="projectNumber"
-            value={formData.projectNumber}
-            onChange={handleChange}
-            readOnly={!!projectId}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+        <FormField
+          label="Project number"
+          id="project-number"
+          name="projectNumber"
+          value={formData.projectNumber.toString()}
+          onChange={handleChange}
+          readOnly={!!projectId}
+        />
 
-        <div>
-          <label htmlFor="project-name" className="block text-sm font-medium text-gray-700">
-            Project name <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="project-name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+        <FormField
+          label="Project name"
+          id="project-name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
 
-        <div>
-          <label htmlFor="customer" className="block text-sm font-medium text-gray-700">
-            Customer <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            id="customer"
-            name="customer"
-            value={formData.customer}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+        <FormField
+          label="Customer"
+          id="customer"
+          name="customer"
+          value={formData.customer}
+          onChange={handleChange}
+          required
+        />
 
-        <div>
-          <label htmlFor="group" className="block text-sm font-medium text-gray-700">
-            Group <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="groupId"
-            name="groupId"
-            value={formData.groupId}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            {groupid.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <FormSelect
+          label="Group"
+          id="groupId"
+          name="groupId"
+          value={formData.groupId}
+          options={groupOptions}
+          onChange={handleChange}
+          required
+        />
 
-        <div>
-          <label htmlFor="member" className="block text-sm font-medium text-gray-700">
-            Members
-          </label>
-          <input
-            type="text"
-            id="member"
-            name="employeeVisa"
-            value={formData.employeeVisa.join(",")}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+        <FormSelect
+          label="Status"
+          id="status"
+          name="status"
+          value={formData.status}
+          options={[
+            { value: "NEW", label: "New" },
+            { value: "FIN", label: "Finished" },
+            { value: "INP", label: "In progress" },
+            { value: "PLA", label: "Planned" },
+          ]}
+          onChange={handleChange}
+          required
+        />
 
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
-            Status <span className="text-red-500">*</span>
-          </label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          >
-            <option value="NEW">New</option>
-            <option value="FIN">Finished</option>
-            <option value="INP">In progress</option>
-            <option value="PLA">Planned</option>
-          </select>
-        </div>
+        <FormField
+          label="Start date"
+          id="start-date"
+          name="startDate"
+          value={formData.startDate}
+          onChange={handleChange}
+          type="date"
+          required
+        />
 
-        <div>
-          <label htmlFor="start-date" className="block text-sm font-medium text-gray-700">
-            Start date <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="date"
-            id="start-date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          <label htmlFor="end-date" className="block text-sm font-medium text-gray-700 mt-4">
-            End date
-          </label>
-          <input
-            type="date"
-            id="end-date"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+        <FormField
+          label="End date"
+          id="end-date"
+          name="endDate"
+          value={formData.endDate}
+          onChange={handleChange}
+          type="date"
+        />
 
         <div className="flex space-x-4 mt-8">
-          <Link to="/">
+          <Link to="/admin">
             <Button>Cancel</Button>
           </Link>
           <Button type="primary" htmlType="submit">
@@ -226,5 +168,78 @@ const ProjectPage = () => {
     </div>
   );
 };
+
+const FormField = ({
+  label,
+  id,
+  name,
+  value,
+  onChange,
+  type = "text",
+  readOnly = false,
+  required = false,
+}: {
+  label: string;
+  id: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+  readOnly?: boolean;
+  required?: boolean;
+}) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <input
+      type={type}
+      id={id}
+      name={name}
+      value={value}
+      onChange={onChange}
+      readOnly={readOnly}
+      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+    />
+  </div>
+);
+
+const FormSelect = ({
+  label,
+  id,
+  name,
+  value,
+  onChange,
+  options,
+  required = false,
+}: {
+  label: string;
+  id: string;
+  name: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  options: { value: string | number; label: string }[];
+  required?: boolean;
+}) => (
+  <div>
+    <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      {label} {required && <span className="text-red-500">*</span>}
+    </label>
+    <select
+      id={id}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
 
 export default ProjectPage;
