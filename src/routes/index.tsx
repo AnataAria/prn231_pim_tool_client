@@ -37,6 +37,10 @@ const routes = createBrowserRouter([
                 element: <ProjectPage/>
             },
             {
+                path: "/admin/projects/new",
+                element: <ProjectPage/>
+            },
+            {
                 path: "/admin/groups",
                 element: <GroupTableView/>
             }

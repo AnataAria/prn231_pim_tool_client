@@ -2,19 +2,28 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useParams } from "react-router-dom";
 import { Button } from "antd";
-import axios from "axios";
 import { authenticationAxios } from "../../../services/baseService";
 
 const ProjectPage = () => {
   const { projectId } = useParams();
   const [redirect, setRedirect] = useState(false);
-  const [groupOptions] = useState([
-    { value: 1, label: "1" },
-    { value: 2, label: "2" },
-    { value: 3, label: "3" },
-  ]);
-  const [formData, setFormData] = useState({
-    id: 1,
+  const [groupOptions, setGroupOptions] = useState<{ value: number, label: string }[]>([]);
+  const [groups, setGroups] = useState<{
+    id: number,
+    leaderId: number,
+    leaderName: string,
+    version: number
+  }[]>([])
+  const [formData, setFormData] = useState<{
+    groupId: number,
+    projectNumber: number,
+    name: string,
+    customer: string,
+    status: string,
+    startDate: string,
+    endDate: string,
+    version: number,
+  }>({
     groupId: 1,
     projectNumber: 1,
     name: "",
@@ -26,17 +35,37 @@ const ProjectPage = () => {
   });
 
   useEffect(() => {
-    if (projectId) {
-      const fetchData = async () => {
+    const fetchData = async() => {
+      try {
+        const { data } = await authenticationAxios.get('/groups');
+        setGroupOptions(data.data?.map(item => {
+          return { value: item.id, label: item.leaderName }
+        }) ?? []);
+      } catch (error) {
+        setGroupOptions([{ value: 1, label: "1" },
+        { value: 2, label: "2" },
+        { value: 3, label: "3" }]);
+      }
+      if (projectId) {
         try {
           const { data } = await authenticationAxios.get(`/projects/${projectId}`);
-          setFormData(data);
+          setFormData({
+            groupId: data.data.groupId || 1,
+            projectNumber: data.data.projectNumber || 1,
+            name: data.data.name || "",
+            customer: data.data.customer || "",
+            status: data.data.status || "NEW",
+            startDate: data.data.startDate || "",
+            endDate: data.data.endDate || "",
+            version: data.data.version || 1,
+          });
         } catch (error) {
           toast.error(error.message);
         }
-      };
-      fetchData();
+      }
     }
+    fetchData();
+    console.log(formData);
   }, [projectId]);
 
   const displayErrors = (message) => {
@@ -55,7 +84,15 @@ const ProjectPage = () => {
     e.preventDefault();
 
     try {
-      const { status } = await authenticationAxios.post('/projects', {
+      const { status } = !projectId ?  await authenticationAxios.post('/projects', {
+        groupId: formData.groupId,
+        name: formData.name,
+        projectNumber: formData.projectNumber,
+        customer: formData.customer,
+        status: formData.status,
+        startDate: formData.startDate,
+        endDate: formData.endDate
+      }): await authenticationAxios.put(`/projects/${projectId}`, {
         groupId: formData.groupId,
         name: formData.name,
         projectNumber: formData.projectNumber,
@@ -82,13 +119,13 @@ const ProjectPage = () => {
         {projectId ? "Edit Project" : "New Project"}
       </h2>
       <div className="border-b border-gray-300 mb-4" />
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <FormField
           label="Project number"
           id="project-number"
           name="projectNumber"
-          value={formData.projectNumber.toString()}
+          value={formData.projectNumber?.toString()}
           onChange={handleChange}
           readOnly={!!projectId}
         />
@@ -138,7 +175,7 @@ const ProjectPage = () => {
 
         <FormField
           label="Start date"
-          id="start-date"
+          id="startDate"
           name="startDate"
           value={formData.startDate}
           onChange={handleChange}
@@ -148,7 +185,7 @@ const ProjectPage = () => {
 
         <FormField
           label="End date"
-          id="end-date"
+          id="endDate"
           name="endDate"
           value={formData.endDate}
           onChange={handleChange}
