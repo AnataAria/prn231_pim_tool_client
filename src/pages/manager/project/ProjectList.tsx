@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { authenticationAxios } from "../../../services/baseService";
 
-// Define the structure of the project data
 interface Project {
   projectNumber: string;
   name: string;
@@ -98,8 +97,7 @@ const ProjectList: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Implement your search functionality here if needed
-    fetchProjects(); // Fetch projects after searching
+    fetchProjects();
   };
 
   const handleStatusChange = (value: string) => {

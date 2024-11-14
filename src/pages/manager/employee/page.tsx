@@ -14,7 +14,7 @@ const EmployeeTablePage = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await authenticationAxios.get('/employees/search');
+        const response = await authenticationAxios.get('/employees');
         setEmployees(response.data.data);
         setLoading(false);
       } catch (error) {

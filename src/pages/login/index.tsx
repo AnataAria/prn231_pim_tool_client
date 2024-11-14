@@ -43,7 +43,7 @@ const LoginPage = () => {
 
         try {
             const result = await unAuthenticationAxios.post("/auth/authentication", {
-                userName: email,
+                username: email,
                 password: password,
             });
 
@@ -67,7 +67,7 @@ const LoginPage = () => {
                 <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
                     <h2 className="text-3xl font-bold text-center mb-6">Welcome Back!</h2>
                     <div className="mb-6">
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Username</label>
                         <input
                             type="email"
                             id="email"
@@ -95,10 +95,6 @@ const LoginPage = () => {
                     >
                         Login
                     </button>
-
-                    <p className="text-center mt-4 text-sm">
-                        Don't have an account? <a href="#" className="text-blue-600 hover:underline">Sign up</a>
-                    </p>
                 </div>
             </div>
             <Footer />

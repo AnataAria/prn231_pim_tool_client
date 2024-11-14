@@ -5,7 +5,7 @@ const Footer = () => {
         <footer className="bg-gray-800 text-white p-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <p className="text-sm mb-2">&copy; {new Date().getFullYear()} Your Company. All rights reserved.</p>
+                    <p className="text-sm mb-2">&copy; {new Date().getFullYear()} Your Arisa Company. All rights reserved.</p>
                     <div className="flex space-x-4">
                         <a href="#" className="text-gray-400 hover:text-white">About</a>
                         <a href="#" className="text-gray-400 hover:text-white">Contact</a>

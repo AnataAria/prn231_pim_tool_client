@@ -29,7 +29,7 @@ const LeftBar: React.FC = () => {
             </li>
             <li>
               <a
-                href="/admin/employee"
+                href="/admin/employees"
                 className="flex items-center space-x-3 text-lg font-medium text-gray-400 hover:bg-gray-700 hover:text-white rounded-md px-4 py-2 transition duration-300"
               >
                 <FaUser className="h-6 w-6 text-gray-400" />
