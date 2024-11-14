@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Table, Space, Input, Select, Button } from "antd";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { authenticationAxios } from "../../../services/baseService";
 
 interface Project {
@@ -11,11 +10,13 @@ interface Project {
   status: string;
   customer: string;
   startDate: string;
+  endDate: string;
 }
 const ProjectList: React.FC = () => {
   const [checkStrictly, setCheckStrictly] = useState(false);
   const [data, setData] = useState<Project[]>([]);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [searchForm, setSearchFormData] = useState({
     status: "",
     search: "",
@@ -24,7 +25,7 @@ const ProjectList: React.FC = () => {
     {
       title: "Number",
       dataIndex: "projectNumber",
-      render: (text: string) => <Link to={`/projects/${text}`}>{text}</Link>,
+      render: (text: string) => <Link to={`/admin/projects/${text}`}>{text}</Link>,
     },
     {
       title: "Name",
@@ -42,6 +43,9 @@ const ProjectList: React.FC = () => {
     {
       title: "Start Date",
       dataIndex: "startDate",
+    },{
+      title: "End Date",
+      dataIndex: "endDate",
     },
     {
       title: "Delete",
@@ -85,7 +89,7 @@ const ProjectList: React.FC = () => {
   const fetchProjects = async () => {
     setLoading(true);
     try {
-      const response = await authenticationAxios.get("/projects");
+      const response = await authenticationAxios.get(`/projects?searchTerm=${searchForm.search ?? 'all'}${searchForm.status === 'disabled' ? '' : `&status=${searchForm.status}`}&pageNumber=1&pageSize=10`);
       setData(response.data.data);
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -136,7 +140,7 @@ const ProjectList: React.FC = () => {
                 onChange={handleChange}
               />
               <Select
-                defaultValue="disabled"
+                defaultValue="Disabled"
                 style={{ width: 120 }}
                 options={[
                   { value: "NEW", label: "New" },

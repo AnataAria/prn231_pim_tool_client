@@ -10,11 +10,11 @@ const EmployeeTablePage = () => {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState<number> (1);
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await authenticationAxios.get('/employees');
+        const response = await authenticationAxios.get(`/employees?page=${currentPage}&size=5&keyword=all`);
         setEmployees(response.data.data);
         setLoading(false);
       } catch (error) {
@@ -25,7 +25,7 @@ const EmployeeTablePage = () => {
     };
 
     fetchEmployees();
-  }, []);
+  }, [currentPage]);
 
   const columns = [
     {
@@ -76,7 +76,9 @@ const EmployeeTablePage = () => {
           dataSource={employees}
           columns={columns}
           rowKey="id"
-          pagination={{ pageSize: 5 }}
+          pagination={{ pageSize: 5, total: 50, onChange: (page) => {
+            setCurrentPage(page);
+          } }}
           bordered
         />
       )}
